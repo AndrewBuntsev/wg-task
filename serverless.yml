@@ -1,0 +1,31 @@
+service: products
+
+plugins:
+  - serverless-webpack
+  
+provider:
+  name: aws
+  stage: dev
+  runtime: nodejs14.x
+  region: ap-southeast-2
+  deploymentBucket:
+    name: til-serverless-deployments
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+        - lambda:InvokeAsync
+      Resource: "*"
+    - Effect: "Allow"
+      Action: rds:*
+      Resource: "*"
+    
+functions:
+  getProducts:
+    handler: lambda/get-products.getProducts
+    events:
+      - http:
+          path: products
+          method: get
+
