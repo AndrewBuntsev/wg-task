@@ -1,62 +1,35 @@
-import { APIGatewayEvent, Context, Handler } from 'aws-lambda';
+import { APIGatewayEvent, Context } from 'aws-lambda';
 import { createErrorResponse, HttpResponse } from '../utils/api-gateway-response';
 const dbClient = require('../db/dbClient');
 
-
 export async function getProducts(event: APIGatewayEvent, context: Context) {
-    console.log('getProducts Event: ', JSON.stringify(event));
+    console.log('getProducts function is called with event.queryStringParameters: ', event.queryStringParameters);
 
-    
     // allow just 'GET' requests
     if (event.httpMethod !== 'GET') {
         return new HttpResponse(405, { message: `Unsupported method "${event.httpMethod}"` })
     };
-  
+
+    const { minPrice, maxPrice, fantastic, minRating, maxRating } = event.queryStringParameters ?? {};
     
     try {
-        // compose mock products
-        // const products = [
-        //     {
-        //       "id": 2,
-        //       "sku": "370-04-2494",
-        //       "name": "Cocoa butter, Phenylephrine HCl, Shark liver oil",
-        //       "price": 983.7,
-        //       "attribute": {
-        //         "fantastic": {
-        //           "value": true,
-        //           "type": 1,
-        //           "name": "fantastic"
-        //         },
-        //         "rating": {
-        //           "name": "rating",
-        //           "type": "2",
-        //           "value": 2
-        //         }
-        //       }
-        //     },
-        //     {
-        //       "id": 3,
-        //       "sku": "470-21-1561",
-        //       "name": "simvastatin",
-        //       "price": 196.75,
-        //       "attribute": {
-        //         "fantastic": {
-        //           "value": true,
-        //           "type": 1,
-        //           "name": "fantastic"
-        //         },
-        //         "rating": {
-        //           "name": "rating",
-        //           "type": "2",
-        //           "value": 4
-        //         }
-        //       }
-        //     }
-        //   ];
-
-        const products = await dbClient.getProducts({});
-        console.log('products = ', products);
-
+        const productsPromise = dbClient.getProducts({ minPrice, maxPrice, fantastic, minRating, maxRating });
+        const allAttributesPromise = dbClient.getAttributes({});
+        const promiseResults = await Promise.all([productsPromise, allAttributesPromise]);
+        const products: Array<any> = promiseResults[0];
+        const allAttributes: Array<any> = promiseResults[1];
+        
+        // reshape payload to the required format
+        products.forEach(product => {
+            product.attribute = JSON.parse(product.attribute);
+            for (const attributeName of Object.keys(product.attribute)) {
+                product.attribute[attributeName] = {
+                    value: product.attribute[attributeName],
+                    type: allAttributes.find(a => a.name == attributeName).type,
+                    name: attributeName
+                };
+              }
+        });
 
         return new HttpResponse(200, products);
     } catch (err) {
