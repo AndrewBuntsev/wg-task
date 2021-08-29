@@ -1,5 +1,6 @@
 import { APIGatewayEvent, Context, Handler } from 'aws-lambda';
 import { createErrorResponse, HttpResponse } from '../utils/api-gateway-response';
+const dbClient = require('../db/dbClient');
 
 
 export async function getProducts(event: APIGatewayEvent, context: Context) {
@@ -14,46 +15,48 @@ export async function getProducts(event: APIGatewayEvent, context: Context) {
     
     try {
         // compose mock products
-        const products = [
-            {
-              "id": 2,
-              "sku": "370-04-2494",
-              "name": "Cocoa butter, Phenylephrine HCl, Shark liver oil",
-              "price": 983.7,
-              "attribute": {
-                "fantastic": {
-                  "value": true,
-                  "type": 1,
-                  "name": "fantastic"
-                },
-                "rating": {
-                  "name": "rating",
-                  "type": "2",
-                  "value": 2
-                }
-              }
-            },
-            {
-              "id": 3,
-              "sku": "470-21-1561",
-              "name": "simvastatin",
-              "price": 196.75,
-              "attribute": {
-                "fantastic": {
-                  "value": true,
-                  "type": 1,
-                  "name": "fantastic"
-                },
-                "rating": {
-                  "name": "rating",
-                  "type": "2",
-                  "value": 4
-                }
-              }
-            }
-          ];
+        // const products = [
+        //     {
+        //       "id": 2,
+        //       "sku": "370-04-2494",
+        //       "name": "Cocoa butter, Phenylephrine HCl, Shark liver oil",
+        //       "price": 983.7,
+        //       "attribute": {
+        //         "fantastic": {
+        //           "value": true,
+        //           "type": 1,
+        //           "name": "fantastic"
+        //         },
+        //         "rating": {
+        //           "name": "rating",
+        //           "type": "2",
+        //           "value": 2
+        //         }
+        //       }
+        //     },
+        //     {
+        //       "id": 3,
+        //       "sku": "470-21-1561",
+        //       "name": "simvastatin",
+        //       "price": 196.75,
+        //       "attribute": {
+        //         "fantastic": {
+        //           "value": true,
+        //           "type": 1,
+        //           "name": "fantastic"
+        //         },
+        //         "rating": {
+        //           "name": "rating",
+        //           "type": "2",
+        //           "value": 4
+        //         }
+        //       }
+        //     }
+        //   ];
 
-        console.log('products: ', products);
+        const products = await dbClient.getProducts({});
+        console.log('products = ', products);
+
 
         return new HttpResponse(200, products);
     } catch (err) {

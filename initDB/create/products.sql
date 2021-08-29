@@ -1,0 +1,7 @@
+CREATE TABLE `wg`.`products` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `sku` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(1000) NOT NULL,
+  `price` DECIMAL(10, 2) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC));

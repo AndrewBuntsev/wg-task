@@ -1,12 +1,19 @@
 # Products
 --------------------------------------
 
-# Head1
 
-Date        | Comment
------------ | -------
-2021-08-28  | Documentation of PCA API
 
 # Description
 
-TODO: update packages
+
+
+https://n3n9dzi5ig.execute-api.ap-southeast-2.amazonaws.com/dev/products
+
+comments:
+TODO:
+ - db schema explained
+ - REPLACE REQUIRE WITH IMPORT
+
+improvements: 
+ - db schema
+ - paging
