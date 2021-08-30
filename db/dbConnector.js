@@ -1,6 +1,3 @@
-// .env initialize
-//require('dotenv').config();
-
 const mysql = require('mysql');
 const util = require('util');
 
@@ -13,11 +10,11 @@ const pool = mysql.createPool(
     }
 );
 
-
 const query = util.promisify(pool.query).bind(pool);
 
 exports.products = require('./entities/products');
 exports.attributeTypes = require('./entities/attributeTypes');
+exports.attributes = require('./entities/attributes');
 
 
 exports.dbCall = async (func, options) => {

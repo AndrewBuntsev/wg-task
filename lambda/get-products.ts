@@ -1,6 +1,6 @@
 import { APIGatewayEvent, Context } from 'aws-lambda';
 import { createErrorResponse, HttpResponse } from '../utils/api-gateway-response';
-const dbClient = require('../db/dbClient');
+import * as dbClient from '../db/dbClient';
 
 export async function getProducts(event: APIGatewayEvent, context: Context) {
     console.log('getProducts function is called with event.queryStringParameters: ', event.queryStringParameters);
